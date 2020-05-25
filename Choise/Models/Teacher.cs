@@ -9,5 +9,7 @@ namespace Choise.Models
     {
         public int Id { set; get; }
         public string Name { set; get; }
+
+        public List<Discipline> Disciplines { set; get; }
     }
 }
