@@ -10,5 +10,7 @@ namespace Choise.Models
         public int Id { set; get; }
         public string Name { set; get; }
         public string Group { set; get; }
+
+        public List<StudDisc> StudDiscs { set; get; }
     }
 }
