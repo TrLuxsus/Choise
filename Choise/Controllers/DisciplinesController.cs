@@ -48,7 +48,7 @@ namespace Choise.Controllers
         // GET: Disciplines/Create
         public IActionResult Create()
         {
-            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Id");
+            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Name");
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace Choise.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Id", discipline.TeacherId);
+            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Name", discipline.TeacherId);
             return View(discipline);
         }
 
@@ -82,7 +82,7 @@ namespace Choise.Controllers
             {
                 return NotFound();
             }
-            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Id", discipline.TeacherId);
+            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Name", discipline.TeacherId);
             return View(discipline);
         }
 
@@ -118,7 +118,7 @@ namespace Choise.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Id", discipline.TeacherId);
+            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Name", discipline.TeacherId);
             return View(discipline);
         }
 
