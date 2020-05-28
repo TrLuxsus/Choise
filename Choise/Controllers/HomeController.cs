@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using Choise.Models;
 using Choise.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Choise.Controllers
 {
@@ -25,6 +27,25 @@ namespace Choise.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Students.ToListAsync());
+        }
+
+        // GET: Home/Select/5
+        public async Task<IActionResult> Select(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var selectedDisciplines =
+                await _context.StudsDiscs.
+                Where(i => i.StudentId == id).
+                Select(i => i.Discipline).
+                ToListAsync();
+
+            ViewBag.Selected = selectedDisciplines;
+
+            return View(await _context.Disciplines.ToListAsync());
         }
 
         public IActionResult Privacy()

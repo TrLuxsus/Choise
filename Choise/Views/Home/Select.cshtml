@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Choise.Models.Discipline>
+
+@{
+    ViewData["Title"] = "Select";
+}
+
+<h1>Select</h1>
+
+<h4>Disciplines</h4>
+<hr />
+
+<form asp-action="Select">
+    <div>
+        @foreach (var item in Model)
+        {
+            @Html.DisplayFor(modelItem => item.Title)
+            <input type="checkbox" name="Selection" checked=@(ViewBag.Selected.Contains(item)) />
+            <br />
+        }
+    </div>
+    <input type="submit" value="Select" class="btn btn-danger" />
+</form>
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
