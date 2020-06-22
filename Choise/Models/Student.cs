@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Choise.Models
 {
-    public class Student
+    public class Student : IValidatableObject
     {
         public int Id { set; get; }
         [Required]
@@ -16,5 +16,19 @@ namespace Choise.Models
         public string Group { set; get; }
 
         public List<StudDisc> StudDiscs { set; get; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            bool IsForbidden(string prop)
+            {
+                string[] forbiddens = { "xxx" };
+                return forbiddens.Any(f => prop == f);
+            }
+
+            if (IsForbidden(Name))
+                yield return new ValidationResult("Name is a forbidden word.", new string[] { "Name" });
+            if (IsForbidden(Group))
+                yield return new ValidationResult("Group is a forbidden word.", new string[] { "Group" });
+        }
     }
 }
