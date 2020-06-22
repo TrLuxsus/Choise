@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Choise.Models.Discipline>
+﻿@model Choise.Models.HomeSelectViewModel
 
 @{
     ViewData["Title"] = "Select";
@@ -9,16 +9,27 @@
 <h4>Disciplines</h4>
 <hr />
 
-<form asp-action="Select">
-    <div>
-        @foreach (var item in Model)
-        {
-            @Html.DisplayFor(modelItem => item.Title)
-            <input type="checkbox" name="Selection" checked=@(ViewBag.Selected.Contains(item)) />
-            <br />
-        }
-    </div>
-    <input type="submit" value="Select" class="btn btn-danger" />
+<form method="post" asp-action="Select">
+    @foreach (var item in Model.SelDiscs)
+    {
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="selDiscIds" value="@item.Id" checked />
+                @item.Title
+            </label>
+        </div>
+    }
+    @foreach (var item in Model.NonSelDiscs)
+    {
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="selDiscIds" value="@item.Id"  />
+                @item.Title
+            </label>
+        </div>
+    }
+    <input type="submit" value="Submit" class="btn btn-primary" />
+    <input type="hidden" value="@Model.Student.Id" name="studentId" />
 </form>
 
 

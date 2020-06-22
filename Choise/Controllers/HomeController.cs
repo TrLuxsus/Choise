@@ -32,20 +32,30 @@ namespace Choise.Controllers
         // GET: Home/Select/5
         public async Task<IActionResult> Select(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var student = _context.Students.Include("StudDiscs").SingleOrDefault(s => s.Id == id);
+            var selDiscIds = student.StudDiscs.Select(d => d.DisciplineId);
+            var discs = _context.Disciplines;
 
-            var selectedDisciplines =
-                await _context.StudsDiscs.
-                Where(i => i.StudentId == id).
-                Select(i => i.Discipline).
-                ToListAsync();
+            var model = new HomeSelectViewModel { Student = student };
+            model.SelDiscs = discs.Where(d => selDiscIds.Contains(d.Id)).OrderBy(d => d.Title);
+            model.NonSelDiscs = discs.Except(model.SelDiscs).OrderBy(d => d.Title);
 
-            ViewBag.Selected = selectedDisciplines;
+            return View(model);
+        }
 
-            return View(await _context.Disciplines.ToListAsync());
+        // POST: Home/Select/5
+        [HttpPost]
+        public async Task<IActionResult> Select(int studentId, int[] selDiscIds)
+        {
+            var student = _context.Students.Include("StudDiscs").SingleOrDefault(s => s.Id == studentId);
+            student.StudDiscs = new List<StudDisc>();
+
+            foreach (var id in selDiscIds)
+                student.StudDiscs.Add(new StudDisc { StudentId = student.Id, DisciplineId = id });
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Select");
         }
 
         public IActionResult Privacy()
