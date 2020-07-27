@@ -1,0 +1,42 @@
+﻿@model ChoiceA.Models.HomeSelectViewModel
+
+@{
+    ViewData["Title"] = "Select";
+}
+
+<h1>Select</h1>
+
+<h4>Disciplines</h4>
+<hr />
+
+<form method="post" asp-action="Select">
+    @foreach (var item in Model.SelDiscs)
+    {
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="selDiscIds" value="@item.Id" checked />
+                @item.Title
+            </label>
+        </div>
+    }
+    @foreach (var item in Model.NonSelDiscs)
+    {
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="selDiscIds" value="@item.Id" />
+                @item.Title
+            </label>
+        </div>
+    }
+    <input type="submit" value="Submit" class="btn btn-primary" />
+    <input type="hidden" value="@Model.Student.Id" name="studentId" />
+</form>
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
