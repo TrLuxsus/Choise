@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using ChoiceA.Data;
 using ChoiceA.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace ChoiceA.Controllers
 {
@@ -15,10 +17,12 @@ namespace ChoiceA.Controllers
     public class StudentsController : Controller
     {
         private readonly DomainDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public StudentsController(DomainDbContext context)
+        public StudentsController(DomainDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Students
@@ -56,13 +60,30 @@ namespace ChoiceA.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Group")] Student student)
+        public async Task<IActionResult> Create([Bind("Name,Group")] Student student)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(student);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            if(ModelState.IsValid)
+            { 
+                // register new user
+                var user = new IdentityUser { UserName = student.Name, Email = $"{student.Name}@gmail.com" };
+                // _userManager.AddClaimAsync(user, new Claim("studentId", student.Id.ToString()));
+                var result = await _userManager.CreateAsync(user, "!1Tempo");
+
+                if (result.Succeeded)
+                {
+                    // add new student
+                    _context.Add(student);
+                    await _context.SaveChangesAsync();
+
+                    // add clime //////////////////////////////
+                    // await _userManager.AddClaimAsync(user, new Claim("studentId", student.Id.ToString()));
+                    /////////////////////////////////////////////////
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError("Name", result.Errors.First().Description);
+                }
             }
             return View(student);
         }

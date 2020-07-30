@@ -26,7 +26,13 @@ namespace ChoiceA.Controllers
 
         public IActionResult Index()
         {
-            return  View(_context.Students.ToList());
+            var name = this.User.Identity.Name;
+            var student = _context.Students.SingleOrDefault(s => s.Name == name);
+            if (student != null)
+            {
+                return RedirectToAction("Select", new { id = student.Id });
+            }
+            return View(_context.Students.ToList());
         }
 
         // GET: Home/Select/5
