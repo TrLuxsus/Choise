@@ -9,6 +9,7 @@ using ChoiceA.Models;
 using Microsoft.AspNetCore.Authorization;
 using ChoiceA.Data;
 using Microsoft.EntityFrameworkCore;
+using ChoiceA.Filters;
 
 namespace ChoiceA.Controllers
 {
@@ -26,16 +27,21 @@ namespace ChoiceA.Controllers
 
         public IActionResult Index()
         {
-            var name = this.User.Identity.Name;
-            var student = _context.Students.SingleOrDefault(s => s.Name == name);
-            if (student != null)
-            {
-                return RedirectToAction("Select", new { id = student.Id });
-            }
-            return View(_context.Students.ToList());
+            var claim = User.Claims.FirstOrDefault(c => c.Type == "studentId");
+            if (claim == null)
+                return View(_context.Students.ToList());
+            return RedirectToAction("Select", new { id = Convert.ToInt32(claim.Value) });
+            //var name = this.User.Identity.Name;
+            //var student = _context.Students.SingleOrDefault(s => s.Name == name);
+            //if (student != null)
+            //{
+            //    return RedirectToAction("Select", new { id = student.Id });
+            //}
+            //return View(_context.Students.ToList());
         }
 
         // GET: Home/Select/5
+        [ForStudent]
         public IActionResult Select(int? id)
         {
             var student = _context.Students.Include("StudDiscs").SingleOrDefault(s => s.Id == id);

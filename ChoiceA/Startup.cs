@@ -30,12 +30,25 @@ namespace ChoiceA
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDbContext<DomainDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policyBuilder => policyBuilder.RequireClaim("admin"));
+                options.AddPolicy("Student",
+                    policyBuilder => policyBuilder.RequireAssertion(
+                        context => context.User.Claims.Any(c => c.Type == "studentId")
+                    ));
+            });
+
             services.AddControllersWithViews();
+
             services.AddRazorPages();
         }
 

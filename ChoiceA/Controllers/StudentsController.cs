@@ -13,7 +13,7 @@ using System.Security.Claims;
 
 namespace ChoiceA.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "Admin")]
     public class StudentsController : Controller
     {
         private readonly DomainDbContext _context;
@@ -66,7 +66,7 @@ namespace ChoiceA.Controllers
             { 
                 // register new user
                 var user = new IdentityUser { UserName = student.Name, Email = $"{student.Name}@gmail.com" };
-                // _userManager.AddClaimAsync(user, new Claim("studentId", student.Id.ToString()));
+
                 var result = await _userManager.CreateAsync(user, "!1Tempo");
 
                 if (result.Succeeded)
@@ -75,9 +75,8 @@ namespace ChoiceA.Controllers
                     _context.Add(student);
                     await _context.SaveChangesAsync();
 
-                    // add clime //////////////////////////////
-                    // await _userManager.AddClaimAsync(user, new Claim("studentId", student.Id.ToString()));
-                    /////////////////////////////////////////////////
+                    await _userManager.AddClaimAsync(user, new Claim("studentId", student.Id.ToString()));
+
                     return RedirectToAction(nameof(Index));
                 }
                 else
