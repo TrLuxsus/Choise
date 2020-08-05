@@ -10,19 +10,22 @@ using ChoiceA.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using ChoiceA.Services;
 
 namespace ChoiceA.Controllers
 {
     [Authorize(Policy = "Admin")]
     public class StudentsController : Controller
     {
+        readonly IGroupsService _service;
         private readonly DomainDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public StudentsController(DomainDbContext context, UserManager<IdentityUser> userManager)
+        public StudentsController(DomainDbContext context, UserManager<IdentityUser> userManager, IGroupsService service)
         {
             _context = context;
             _userManager = userManager;
+            _service = service;
         }
 
         // GET: Students
@@ -52,6 +55,8 @@ namespace ChoiceA.Controllers
         // GET: Students/Create
         public IActionResult Create()
         {
+            SelectList groups = new SelectList(_service.Groups);
+            ViewBag.Groups = groups;
             return View();
         }
 
@@ -100,6 +105,8 @@ namespace ChoiceA.Controllers
             {
                 return NotFound();
             }
+            SelectList groups = new SelectList(_service.Groups);
+            ViewBag.Groups = groups;
             return View(student);
         }
 

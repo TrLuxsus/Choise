@@ -12,7 +12,6 @@ namespace ChoiceA.Models
         [Required]
         public string Name { set; get; }
         [Required]
-        [StringLength(100, MinimumLength = 3)]
         public string Group { set; get; }
 
         public List<StudDisc> StudDiscs { set; get; }

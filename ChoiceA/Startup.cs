@@ -12,6 +12,7 @@ using ChoiceA.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ChoiceA.Services;
 
 namespace ChoiceA
 {
@@ -46,6 +47,8 @@ namespace ChoiceA
                         context => context.User.Claims.Any(c => c.Type == "studentId")
                     ));
             });
+
+            services.AddGroups();
 
             services.AddControllersWithViews();
 
