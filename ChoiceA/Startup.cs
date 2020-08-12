@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ChoiceA.Services;
+using ChoiceA.Middleware;
 
 namespace ChoiceA
 {
@@ -76,6 +77,8 @@ namespace ChoiceA
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseTopSecret();
 
             app.UseEndpoints(endpoints =>
             {
