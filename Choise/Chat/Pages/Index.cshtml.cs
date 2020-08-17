@@ -28,12 +28,13 @@ namespace Chat.Pages
             _db = db;
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
             Messages = _db.Messages.ToList();
+            return Page();
         }
 
-        public void OnPost()
+        public IActionResult OnPost()
         {
             if (ModelState.IsValid)
             {
@@ -44,8 +45,27 @@ namespace Chat.Pages
                     Sign = User.Identity.Name
                 });
                 _db.SaveChanges();
+                return RedirectToAction("OnGet");
             }
             Messages = _db.Messages.ToList();
+            return Page();
+        }
+
+        public IActionResult OnPostAjax()
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Messages.Add(new Message
+                {
+                    Text = Text,
+                    When = DateTime.Now,
+                    Sign = User.Identity.Name
+                });
+                _db.SaveChanges();
+                return new JsonResult(new { userName = User.Identity.Name });     // 200
+            }
+            var errMes = ModelState["text"]?.Errors[0]?.ErrorMessage ?? "Unknown error";
+            return BadRequest(errMes);     // 400
         }
     }
 }
